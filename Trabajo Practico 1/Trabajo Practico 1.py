@@ -18,7 +18,8 @@ def convertidor_romano(romano, decimal, longitud):
             decimal += (numero - numero_anterior)
             return convertidor_romano(romano, decimal, longitud-2)
 
-prueba = "MIX"
+print("Ingrese el numero romano que desea convertir a decimal")
+prueba = input()
 resultado_prueba = 0
 print(convertidor_romano(prueba, resultado_prueba, len(prueba)-1))
 
