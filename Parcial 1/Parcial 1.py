@@ -1,5 +1,4 @@
 
-
 #Informacion adicional:
 # module_name: jurassic_park.py
 # Puedes hacer lo siguiente:
@@ -11,6 +10,7 @@
 # El archivo alerts.txt tiene la siguiente info (time, zone_code, dino_number, alert_level) por
 # columnas separados por ‘;’.
 
+from datetime import date
 from jurassic_park import dinosaurs
 from claseslistaparcial import Lista
 from clasescola import Cola
@@ -50,7 +50,11 @@ for dino in dinosaurs:
     auxiliar = dino['named_by'].split(',')
     listadinos.insertar(Dinosaurio(dino['name'], dino['type'], dino['number'], dino['period'], auxiliar[0], auxiliar[1]), 'number')
 
-print(listadinos.mayor_de_lista('date'))
+dinomayor = listadinos.mayor_de_lista('date')
+print('El ultimo dinosaurio en ser descubierto fue: ' + dinomayor.name)
+print('Este fue descubierto por: ' + dinomayor.named_by)
+print()
+
 
 #Consigna 2: Procesar el archivo .txt, organizarlo en 2 estructuras 1 por fecha y 1 por nombre,
 #Agregar el nombre de los dinosaurios de acuerdo a su numero
@@ -64,12 +68,12 @@ lineas.pop(0)
 
 for linea in lineas:
     datos = linea.split(';')        
-                 
-    print(datos)
+    
     for dino in dinosaurs:
         if(dino['number'] == int(datos[2])):
             nombree = dino['name']
 
+    datos[3] = datos[3].split('\n')[0]
 
     lista_alerta_fecha.insertar(Alerta(datos[0], 
                         datos[1], 
@@ -86,15 +90,16 @@ lista_alerta_fecha.eliminar('SXH966', 'zona')
 lista_alerta_fecha.eliminar('LYF010', 'zona')
 
 auxia = lista_alerta_fecha.eliminar('HYD195', 'zona')
-auxia2 = Alerta(auxia['hora'], auxia['zona'], auxia['dinonumber'], auxia['nivel'], 'Mosasaurus')
-lista_alerta_fecha.insertar(auxia2)
+auxia.name = 'Mosasaurus'
+lista_alerta_fecha.insertar(auxia, 'hora')
 
 lista_alerta_nombre.eliminar('WYG075', 'zona')
 lista_alerta_nombre.eliminar('SXH966', 'zona')
 lista_alerta_nombre.eliminar('LYF010', 'zona')
+
 auxia = lista_alerta_nombre.eliminar('HYD195', 'zona')
-auxia2 = Alerta(auxia['hora'], auxia['zona'], auxia['dinonumber'], auxia['nivel'], 'Mosasaurus')
-lista_alerta_nombre.insertar(auxia2)
+auxia.name = 'Mosasaurus'
+lista_alerta_nombre.insertar(auxia, 'hora')
 
 #Consigna 4: Generar un listado que solo incluya los dinosaurios: Tyrannosaurus Rex, Spinosaurus, Giganotosaurus con
 #nivel  ́critical’ o ‘high’.
@@ -102,51 +107,64 @@ lista_alerta_nombre.insertar(auxia2)
 lista_critical_high = Lista()
 contador = 0
 
+print('Listado de alertas nivel critical o high de Tyrannosaurus Rex, Spinosaurus o Giganotosaurus: ')
 while(contador < lista_alerta_fecha.tamanio()):
     auxxx = lista_alerta_fecha.obtener_elemento(contador)
-    auxxx2 = listadinos.busqueda(auxxx['name'])
-    if (auxxx2.info.type is 'Tyrannosaurus Rex') and ('critical' or 'high' in auxxx.nivel):
-        lista_critical_high.insertar(auxxx)
-    if (auxxx2.info.type is 'Spinosaurus') and ('critical' or 'high' in auxxx.nivel):
-        lista_critical_high.insertar(auxxx)    
-    if (auxxx2.info.type is 'Giganotosaurus') and ('critical' or 'high' in auxxx.nivel):
-        lista_critical_high.insertar(auxxx)
+
+    if (auxxx.name == 'Tyrannosaurus Rex') and ('critical' or 'high' in auxxx.nivel):
+        lista_critical_high.insertar(auxxx, 'name')
+    if (auxxx.name == 'Spinosaurus') and ('critical' or 'high' in auxxx.nivel):
+        lista_critical_high.insertar(auxxx, 'name')    
+    if (auxxx.name == 'Giganotosaurus') and ('critical' or 'high' in auxxx.nivel):
+        lista_critical_high.insertar(auxxx, 'name')
     contador += 1
 
-
+lista_critical_high.barrido()
+print()
 #Consigna 5: Tomar toda la información de alertas e insertarlas en 2 colas, una con los datos de dinosaurios
 #carnívoros y otra con los herbívoros, descartando los de nivel ‘low’ y ‘medium’
 
 cola_carnivoros = Cola()
-cola_hervivoros = Cola()
+cola_herbivoros = Cola()
 
-contador = 0
 while(contador < lista_alerta_fecha.tamanio()):
-    auxxx = lista_alerta_fecha.obtener_elemento(contador)
-    auxxx2 = listadinos.busqueda(auxxx['name'])
-    if (auxxx2.info.type == 'carnivoro') and not ('low' or 'medium' in auxxx.nivel):
-        cola_carnivoros.arribo(auxxx)
-    if (auxxx2.info.type == 'hervivoro') and not ('low' or 'medium' in auxxx.nivel):
-        cola_hervivoros.arribo(auxxx)
+    auxxx2 = lista_alerta_fecha.obtener_elemento(contador)
+
+    dino = listadinos.busqueda(auxxx2.name, 'name')
+
+    if (auxxx2.nivel != 'low') and (auxxx2.nivel != 'medium'):
+        if ('carn' in dino.type):
+            cola_carnivoros.arribo(auxxx2) 
+        if ('herb' in dino.type):
+            cola_herbivoros.arribo(auxxx2) 
     contador += 1
+
+print(cola_carnivoros.tamanio())
 
 #Consigna 6: Mostrar las alertas de la cola de carnivoros, descartando las de la zona EPC944
 
 contador = 0
-while(contador < cola_carnivoros.tamanio):
+print('Informacion de los carnivoros (a excepcion de la zona EPC944): ')
+while(contador < cola_carnivoros.tamanio()):
     auxilia = cola_carnivoros.en_frente()
-    if(auxilia['zona'] is not 'EPC944'):
+    if not ('EPC944' in auxilia.zona):
         print(auxilia)
     cola_carnivoros.mover_al_final()
     contador += 1
-cola_carnivoros.mover_al_final()
+print()
 
 #Consigna 7: Enviar toda la informacion de los Raptors y Carnotaurus, y los códigos de las zonas 
 #donde hay dinosaurios Compsognathus.
 
-listadinos.barrido_segun_dino('Raptor')
-listadinos.barrido_segun_dino('Carnotaurus')
+print('Informacion de los Raptors:')
+lista_alerta_nombre.barrido_segun_dino('Raptors')
+print()
+print('Informacion de los Carnotaurus:')
+lista_alerta_nombre.barrido_segun_dino('Carnotaurus')
+print()
+print('Zonas con Compsognathus:')
 lista_alerta_nombre.barrido_segun_dino_zona('Compsognathus')
+print()
 
 
 #Consigna 8: desde que Jurassic Park arranco la calve a ha sido ‘mosquito’ pero que
@@ -163,7 +181,9 @@ clave = 'mosquito'
 cuenta = 0
 resolucion = 0
 while (cuenta <= 7):
-    aux3 = int(clave[cuenta])
+    aux3 = clave[cuenta]
+    aux3 = ord(aux3)
+
     if(aux3 >= 33 and aux3 <= 47):
         if (aux3 % 3 == 0):
             aux3 = ((aux3 // 2) + 9)
@@ -172,6 +192,7 @@ while (cuenta <= 7):
     resolucion += aux3
     cuenta += 1
 
+resolucion = str(resolucion)
 print('La contraseña es: ' + resolucion)
 
 

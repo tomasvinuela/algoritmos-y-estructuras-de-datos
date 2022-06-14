@@ -68,6 +68,20 @@ class Lista():
                 print(aux.info)
             aux = aux.sig
 
+    def barrido_segun_dino(self, palabra):
+        aux = self.__inicio
+        while(aux is not None):
+            if(palabra in aux.info.name):
+                print(aux.info)
+            aux = aux.sig
+
+    def barrido_segun_dino(self, palabra):
+        aux = self.__inicio
+        while(aux is not None):
+            if(palabra in aux.info.name):
+                print(aux.info.zona)
+            aux = aux.sig
+
     def barrido_segun_menor(self, numero):
         aux = self.__inicio
         while(aux is not None):
@@ -111,15 +125,6 @@ class Lista():
             if((aux.info.dato / porcentaje) >= porciento):
                 print(aux.info)
             aux = aux.sig
-
-    def barrido_con_eliminacion(self, barra):
-        aux = self.__inicio
-        while(aux is not None):
-            if(aux.info.dato == barra):
-                print(aux.info)
-                auxilia = aux.sig
-                aux.eliminar()
-            aux = auxilia
       
 
     def busqueda(self, buscado, campo=None):
