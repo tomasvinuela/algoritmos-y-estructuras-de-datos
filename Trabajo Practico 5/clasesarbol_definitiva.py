@@ -228,7 +228,7 @@ def busqueda_coincidencia(arbol, clave):
 def busqueda_proximidad(arbol, clave):
     aux = None
     if arbol is not None and arbol['info'] is not None:
-        if clave in arbol['info']:
+        if arbol['info'].startswith(clave):
             aux = arbol
         elif clave < arbol['info']:
             aux = busqueda(arbol['izq'], clave)
